@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+src/entropy_estimators.egg-info/PKG-INFO
+src/entropy_estimators.egg-info/SOURCES.txt
+src/entropy_estimators.egg-info/dependency_links.txt
+src/entropy_estimators.egg-info/requires.txt
+src/entropy_estimators.egg-info/top_level.txt
+tests/test_entropy_estimators.py
