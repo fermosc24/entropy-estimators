@@ -26,51 +26,79 @@ power = memoize(power)
 
 def sample_frequencies(M, n):
     """
-    Sample elements without replacement from a multiset defined by frequencies.
+    Samples n elements without replacement from a multiset defined by frequencies in M.
 
     Parameters:
         M (np.ndarray): Array of non-negative integers representing frequencies.
         n (int): Number of samples to draw (must be <= M.sum()).
 
     Returns:
-        np.ndarray: Array with sampled frequencies of same shape as M.
+        np.ndarray: Matrix of same shape as M, with counts of sampled elements.
     """
     if not np.issubdtype(M.dtype, np.integer):
         raise ValueError("M must contain integer frequencies.")
+
     total = M.sum()
     if n > total:
-        raise ValueError("Cannot sample more elements than available instances.")
-    population = np.repeat(np.arange(M.size), M.flatten())
+        raise ValueError("Cannot sample more elements than the total number of available instances.")
+
+    # Create the full population from M: list of indices repeated by frequency
+    flat_M = M.flatten()
+    population = np.repeat(np.arange(flat_M.size), flat_M)
+
+    # Sample without replacement
     sampled = np.random.choice(population, size=n, replace=False)
-    counts = np.bincount(sampled, minlength=M.size)
+
+    # Count occurrences
+    counts = np.bincount(sampled, minlength=flat_M.size)
+
+    # Reshape back to M's shape
     return counts.reshape(M.shape)
 
 
 def dict_to_ndarray(d):
     """
-    Convert dictionary with tuple keys to ndarray and index maps.
+    Convert a dictionary with non-numeric t-dimensional tuple keys into a NumPy ndarray.
+    
+    Returns both:
+    - ndarray with integer values
+    - list of index maps (one per dimension) from labels to numeric indices
 
     Parameters:
-        d (dict): Dictionary with tuple keys and integer values.
+        d (dict): Keys are t-dimensional tuples (labels), values are integers.
 
     Returns:
-        tuple: (ndarray, list of index maps for each dimension)
+        ndarray: t-dimensional array where array[numeric indices] = value.
+        index_maps: List of dicts mapping label -> index for each dimension.
     """
     if not d:
         raise ValueError("Input dictionary is empty.")
+    
     t = len(next(iter(d)))
     label_sets = [set() for _ in range(t)]
+    
+    # Collect unique labels in each dimension
     for key in d:
         if len(key) != t:
-            raise ValueError("All keys must be the same length.")
+            raise ValueError("All keys must have the same tuple length.")
         for i, label in enumerate(key):
             label_sets[i].add(label)
-    index_maps = [{label: idx for idx, label in enumerate(sorted(s))} for s in label_sets]
+    
+    # Create label -> index maps
+    index_maps = []
+    for s in label_sets:
+        sorted_labels = sorted(s)
+        index_maps.append({label: idx for idx, label in enumerate(sorted_labels)})
+    
+    # Determine shape
     shape = tuple(len(m) for m in index_maps)
     arr = np.zeros(shape, dtype=int)
+
+    # Populate array using index maps
     for key, value in d.items():
         idx = tuple(index_maps[i][label] for i, label in enumerate(key))
         arr[idx] = value
+
     return arr, index_maps
 
 ##########################
