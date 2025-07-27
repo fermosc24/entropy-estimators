@@ -1,3 +1,5 @@
 # Ignore build artifacts
 build/
+__pycache__/
+*.py[cod]
 
