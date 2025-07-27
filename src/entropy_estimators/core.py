@@ -151,6 +151,52 @@ def FreqShrink(counts):
     lambdaF = min(max(lambdaF, 0.), 1.)
     return lambdaF * t + (1. - lambdaF) * p
 
+def JS_KullbackLeibler(counts1, counts2):
+    """
+    Compute KL divergence between two count vectors using James-Stein smoothed probabilities.
+
+    Parameters:
+        counts1 (list[int]): First list of counts.
+        counts2 (list[int]): Second list of counts.
+
+    Returns:
+        float: KL divergence D(P1 || P2)
+    """
+    l1 = list(counts1)
+    l2 = list(counts2)
+    dl = len(l1) - len(l2)
+    if dl > 0:
+        l2 += [0] * dl
+    elif dl < 0:
+        l1 += [0] * (-dl)
+    p1 = FreqShrink(l1)
+    p2 = FreqShrink(l2)
+    return np.sum(p1 * np.log(p1 / p2))
+
+
+def JS_JensenShannon(counts1, counts2):
+    """
+    Compute Jensen-Shannon divergence between two count vectors using James-Stein smoothing.
+
+    Parameters:
+        counts1 (list[int]): First list of counts.
+        counts2 (list[int]): Second list of counts.
+
+    Returns:
+        float: Jensen-Shannon divergence.
+    """
+    l1 = list(counts1)
+    l2 = list(counts2)
+    dl = len(l1) - len(l2)
+    if dl > 0:
+        l2 += [0] * dl
+    elif dl < 0:
+        l1 += [0] * (-dl)
+    p1 = FreqShrink(l1)
+    p2 = FreqShrink(l2)
+    mid = (p1 + p2) / 2.
+    return 0.5 * (np.sum(p1 * np.log(p1 / mid)) + np.sum(p2 * np.log(p2 / mid)))
+
 
 def JamesSteinShrink(counts):
     """
