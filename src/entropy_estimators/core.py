@@ -204,7 +204,7 @@ def JS_KullbackLeibler(counts1, counts2):
 
 def JS_JensenShannon(counts1, counts2):
     """
-    Compute Jensen-Shannon divergence between two count vectors using James-Stein smoothing.
+    Compute Jensen-Shannon distance between two count vectors using James-Stein smoothing.
 
     Parameters:
         counts1 (list[int]): First list of counts.
@@ -223,7 +223,7 @@ def JS_JensenShannon(counts1, counts2):
     p1 = FreqShrink(l1)
     p2 = FreqShrink(l2)
     mid = (p1 + p2) / 2.
-    return 0.5 * (np.sum(p1 * np.log(p1 / mid)) + np.sum(p2 * np.log(p2 / mid)))
+    return np.sqrt(0.5 * (np.sum(p1 * np.log(p1 / mid)) + np.sum(p2 * np.log(p2 / mid))))
 
 
 def JamesSteinShrink(counts):

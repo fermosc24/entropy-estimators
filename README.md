@@ -34,7 +34,7 @@ Dependencies:
 
 - **Divergence metrics:**
   - KL Divergence (James-Stein smoothed)
-  - Jensen-Shannon Divergence
+  - Jensen-Shannon Distance (James-Stein smoothed)
 
 - **Utility tools:**
   - `FreqShrink`: James-Stein frequency smoothing
